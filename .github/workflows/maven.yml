@@ -4,7 +4,10 @@
 name: Java CI with Maven
 on:
   push:
-    branches: [ main ]
+    #branches: [ main, "**" ]
+    branches-ignore:
+      # Do not push events to branches matching refs/heads/releases/beta/3-alpha
+      - 'dev/**'
   pull_request:
     branches: [ main ]
 jobs:
