@@ -36,19 +36,19 @@ public class JmsBinderPartitionedTestContext {
     }
 
     @Bean
-    public Sinks.Many<Message<String>> out0() {
+    public Sinks.Many<String> out0() {
         return Sinks.many().unicast()
                 .onBackpressureBuffer();
     }
 
     @Bean
-    public Sinks.Many<Message<String>> out1() {
+    public Sinks.Many<String> out1() {
         return Sinks.many().unicast()
                 .onBackpressureBuffer();
     }
 
     @Bean
-    public Sinks.Many<Message<String>> out2() {
+    public Sinks.Many<String> out2() {
         return Sinks.many().unicast()
                 .onBackpressureBuffer();
     }
@@ -59,31 +59,31 @@ public class JmsBinderPartitionedTestContext {
     }
 
     @Bean
-    public Consumer<Flux<Message<String>>> consumer0(Sinks.Many<Message<String>> out0) {
+    public Consumer<Flux<Message<String>>> consumer0(Sinks.Many<String> out0) {
         return flux -> flux
                 .subscribe(message -> {
                     log.info("Received on Partition0 message: {}", message);
-                    out0.tryEmitNext(message)
+                    out0.tryEmitNext(message.getPayload())
                             .orThrow();
                 });
     }
 
     @Bean
-    public Consumer<Flux<Message<String>>> consumer1(Sinks.Many<Message<String>> out1) {
+    public Consumer<Flux<Message<String>>> consumer1(Sinks.Many<String> out1) {
         return flux -> flux
                 .subscribe(message -> {
                     log.info("Received on Partition1 message: {}", message);
-                    out1.tryEmitNext(message)
+                    out1.tryEmitNext(message.getPayload())
                             .orThrow();
                 });
     }
 
     @Bean
-    public Consumer<Flux<Message<String>>> consumer2(Sinks.Many<Message<String>> out2) {
+    public Consumer<Flux<Message<String>>> consumer2(Sinks.Many<String> out2) {
         return flux -> flux
                 .subscribe(message -> {
                     log.info("Received on Partition2 message: {}", message);
-                    out2.tryEmitNext(message)
+                    out2.tryEmitNext(message.getPayload())
                             .orThrow();
                 });
     }

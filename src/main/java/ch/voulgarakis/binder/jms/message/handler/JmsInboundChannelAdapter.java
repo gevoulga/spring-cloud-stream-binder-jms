@@ -15,7 +15,10 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.JmsHeaders;
 import org.springframework.jms.support.JmsUtils;
 import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.support.HeaderMapper;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.retry.RecoveryCallback;
 import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.retry.support.RetryTemplate;
@@ -177,12 +180,16 @@ public class JmsInboundChannelAdapter extends MessageProducerSupport implements 
     }
 
     private Map<String, Object> extractHeaders(Message message) {
-        Map<String, Object> headers = headerMapper.toHeaders(message);
-        if (bindSourceMessage) {
-            headers.put(IntegrationMessageHeaderAccessor.SOURCE_DATA, message);
-        }
-        if (retryTemplate != null) {
-            headers.put(IntegrationMessageHeaderAccessor.DELIVERY_ATTEMPT, new AtomicInteger());
+        MessageHeaders headers = headerMapper.toHeaders(message);
+        SimpMessageHeaderAccessor accessor =
+                MessageHeaderAccessor.getAccessor(headers, SimpMessageHeaderAccessor.class);
+        if (accessor != null) {
+            if (bindSourceMessage) {
+                accessor.setHeader(IntegrationMessageHeaderAccessor.SOURCE_DATA, message);
+            }
+            if (retryTemplate != null) {
+                accessor.setHeader(IntegrationMessageHeaderAccessor.DELIVERY_ATTEMPT, new AtomicInteger());
+            }
         }
         return headers;
     }

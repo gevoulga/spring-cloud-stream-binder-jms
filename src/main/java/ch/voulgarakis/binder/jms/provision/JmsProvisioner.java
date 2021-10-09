@@ -1,6 +1,7 @@
 package ch.voulgarakis.binder.jms.provision;
 
 import ch.voulgarakis.binder.jms.properties.JmsConsumerProperties;
+import ch.voulgarakis.binder.jms.properties.JmsProducerProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.binder.ExtendedConsumerProperties;
@@ -20,14 +21,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JmsProvisioner implements ProvisioningProvider<
         ExtendedConsumerProperties<JmsConsumerProperties>,
-        ExtendedProducerProperties<JmsConsumerProperties>> {
+        ExtendedProducerProperties<JmsProducerProperties>> {
 
     private final ConnectionFactory connectionFactory;
 
     @Override
     public ProducerDestination provisionProducerDestination(
             String destinationName,
-            ExtendedProducerProperties<JmsConsumerProperties> properties) throws ProvisioningException {
+            ExtendedProducerProperties<JmsProducerProperties> properties) throws ProvisioningException {
         List<String> destinations = new ArrayList<>();
         if (properties.isPartitioned()) {
             Map<Integer, String> idToPartition = new HashMap<>();

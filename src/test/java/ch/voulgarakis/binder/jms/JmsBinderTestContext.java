@@ -41,7 +41,7 @@ public class JmsBinderTestContext {
     }
 
     @Bean
-    public Sinks.Many<Message<String>> out() {
+    public Sinks.Many<String> out() {
         return Sinks.many().unicast()
                 .onBackpressureBuffer();
     }
@@ -52,11 +52,11 @@ public class JmsBinderTestContext {
     }
 
     @Bean
-    public Consumer<Flux<Message<String>>> consumer(Sinks.Many<Message<String>> out) {
+    public Consumer<Flux<Message<String>>> consumer(Sinks.Many<String> out) {
         return flux -> flux
                 .subscribe(message -> {
                     log.info("Received message: {}", message);
-                    out.tryEmitNext(message)
+                    out.tryEmitNext(message.getPayload())
                             .orThrow();
                 });
     }

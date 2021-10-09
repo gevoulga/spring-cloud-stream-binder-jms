@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
@@ -17,7 +18,8 @@ import java.time.Duration;
 @Isolated
 @Slf4j
 @SpringBootTest
-@ContextConfiguration(classes = JmsBinderTestContext.class)
+@ContextConfiguration(classes = JmsBinderPartitionedTestContext.class)
+@ActiveProfiles("partitioned")
 public class JmsBinderPartitionedTest {
 
     @Autowired

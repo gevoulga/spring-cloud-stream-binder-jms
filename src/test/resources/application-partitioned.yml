@@ -19,7 +19,7 @@ spring:
           destination: topic://dlt-ticks-2
           group: consumer-group
       #Custom JMS consumer properties
-      jms:
+      jms.bindings:
         default:
           consumer:
             shared: false
