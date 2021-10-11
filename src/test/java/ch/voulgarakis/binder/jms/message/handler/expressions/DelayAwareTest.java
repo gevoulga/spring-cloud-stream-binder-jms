@@ -75,7 +75,7 @@ class DelayAwareTest {
         delayAware.init(producerProperties);
         delayAware.doInit(mock(BeanFactory.class));
 
-        Message<String> message = MessageBuilder.withPayload("TEST").build();
+        Message<String> message = MessageBuilder.withPayload("5").build();
         javax.jms.Message jmsMessage = mock(javax.jms.Message.class);
         delayAware.addDelayProperty(message, jmsMessage);
         verify(jmsMessage).setIntProperty(X_DELAY, 5);

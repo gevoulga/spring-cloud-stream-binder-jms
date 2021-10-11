@@ -183,15 +183,16 @@ public class JmsInboundChannelAdapter extends MessageProducerSupport implements 
         MessageHeaders headers = headerMapper.toHeaders(message);
         SimpMessageHeaderAccessor accessor =
                 MessageHeaderAccessor.getAccessor(headers, SimpMessageHeaderAccessor.class);
-        if (accessor != null) {
+        if (Objects.isNull(accessor)){
+            return headers;
+        }
             if (bindSourceMessage) {
                 accessor.setHeader(IntegrationMessageHeaderAccessor.SOURCE_DATA, message);
             }
             if (retryTemplate != null) {
                 accessor.setHeader(IntegrationMessageHeaderAccessor.DELIVERY_ATTEMPT, new AtomicInteger());
             }
-        }
-        return headers;
+        return accessor.getMessageHeaders();
     }
 
     private Object extractPayload(Message message) {

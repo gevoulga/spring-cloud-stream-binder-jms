@@ -10,7 +10,7 @@ import java.util.Map;
 public class JmsExtendedBindingProperties extends AbstractExtendedBindingProperties
         <JmsConsumerProperties, JmsProducerProperties, JmsBindingProperties> {
 
-    public static final String DEFAULTS_PREFIX = "spring.cloud.streams.jms.default";
+    public static final String DEFAULTS_PREFIX = "spring.cloud.stream.jms.default";
 
     @Override
     public String getDefaultsPrefix() {

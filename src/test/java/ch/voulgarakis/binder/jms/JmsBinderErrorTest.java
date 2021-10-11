@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Isolated
 @Slf4j
 @SpringBootTest
-@ContextConfiguration(classes = JmsBinderTestContext.class)
+@ContextConfiguration(classes = JmsBinderErrorTestContext.class)
 @ActiveProfiles("dlq")
 public class JmsBinderErrorTest {
 
@@ -51,6 +51,6 @@ public class JmsBinderErrorTest {
                     return true;
                 })
                 .thenCancel()
-                .verify(Duration.ofSeconds(15));
+                .verify(Duration.ofSeconds(1500));
     }
 }

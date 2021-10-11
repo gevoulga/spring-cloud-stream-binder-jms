@@ -88,14 +88,15 @@ public class JmsProvisioner implements ProvisioningProvider<
         try (Connection connection = connectionFactory.createConnection()) {
             try (Session session = connection.createSession()) {
                 for (String destination : destinationsToProvision) {
+                    String noPrefix = noPrefix(destination);
                     if (destination.startsWith("topic://")) {
-                        Topic topic = session.createTopic(destination);
+                        Topic topic = session.createTopic(noPrefix);
                         destinations.put(destination, topic);
-                        log.info("Provisioned topic: {}", topic);
+                        log.info("Provisioned: {}", topic);
                     } else if (destination.startsWith("queue://")) {
-                        Queue queue = session.createQueue(destination);
+                        Queue queue = session.createQueue(noPrefix);
                         destinations.put(destination, queue);
-                        log.info("Provisioned queue: {}", queue);
+                        log.info("Provisioned: {}", queue);
                     } else {
                         log.warn("Cannot provision topic/queue name {}. It should start with 'topic://' or 'queue://'.", destination);
                     }

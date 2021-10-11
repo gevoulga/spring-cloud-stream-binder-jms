@@ -10,7 +10,7 @@ import org.springframework.integration.handler.ExpressionEvaluatingMessageProces
 import org.springframework.messaging.Message;
 
 public class DelayAware {
-    public static final String X_DELAY = "x-delay";
+    public static final String X_DELAY = "x_delay";
 
     private Expression delayExpression;
     private ExpressionEvaluatingMessageProcessor<Integer> delayGenerator;

@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Isolated
 @Slf4j
 @SpringBootTest
-@ContextConfiguration(classes = JmsBinderTestContext.class)
+@ContextConfiguration(classes = JmsBinderErrorTestContext.class)
 @ActiveProfiles("dlq-topic")
 public class JmsBinderErrorTopicTest {
 

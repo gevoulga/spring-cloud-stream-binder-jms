@@ -18,9 +18,9 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class DlqErrorSendingMessageHandler extends AbstractMessageHandler {
-    private static final String X_EXCEPTION_MESSAGE = "x-exception-message";
-    private static final String X_ORIGINAL_DESTINATION = "x-original-destination";
-    private static final String X_EXCEPTION_STACKTRACE = "x-exception-stacktrace";
+    private static final String X_EXCEPTION_MESSAGE = "x_exception_message";
+    private static final String X_ORIGINAL_DESTINATION = "x_original_destination";
+    private static final String X_EXCEPTION_STACKTRACE = "x_exception_stacktrace";
 
     private final Destination deadLetterQueue;
     private final JmsTemplate jmsTemplate;
@@ -31,9 +31,9 @@ public class DlqErrorSendingMessageHandler extends AbstractMessageHandler {
         if (message instanceof ErrorMessage) {
             Message<?> originalMessage = ((ErrorMessage) message).getOriginalMessage();
 
-            Object payload = originalMessage.getPayload();
-            MessageHeaders originalHeaders = originalMessage.getHeaders();
-            Throwable cause = (Throwable) originalMessage.getPayload();
+            Object payload = originalMessage != null ? originalMessage.getPayload() : null;
+            MessageHeaders originalHeaders = originalMessage != null ? originalMessage.getHeaders() : null;
+            Throwable cause = (Throwable) message.getPayload();
 
             jmsTemplate.convertAndSend(deadLetterQueue, payload, jmsMessage -> {
                 Map<String, Object> headers = new HashMap<>();
@@ -41,7 +41,8 @@ public class DlqErrorSendingMessageHandler extends AbstractMessageHandler {
                 headers.put(X_EXCEPTION_MESSAGE,
                         cause.getCause() != null ? cause.getCause().getMessage() : cause.getMessage());
                 headers.put(X_EXCEPTION_STACKTRACE, getStackTraceAsString(cause));
-                Object originalDestination = originalHeaders.get(JmsHeaders.DESTINATION);
+                Object originalDestination = originalHeaders != null ?
+                        originalHeaders.get(JmsHeaders.DESTINATION) : null;
                 headers.put(X_ORIGINAL_DESTINATION, Optional.ofNullable(originalDestination)
                         .map(Object::toString).orElse(null));
 

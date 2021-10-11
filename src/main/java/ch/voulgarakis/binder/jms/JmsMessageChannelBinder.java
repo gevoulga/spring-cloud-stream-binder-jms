@@ -2,6 +2,7 @@ package ch.voulgarakis.binder.jms;
 
 import ch.voulgarakis.binder.jms.message.handler.JmsInboundChannelAdapter;
 import ch.voulgarakis.binder.jms.message.handler.JmsMessageHandlerFactory;
+import ch.voulgarakis.binder.jms.message.handler.RejectAndDontRequeueRecoverer;
 import ch.voulgarakis.binder.jms.properties.JmsConsumerProperties;
 import ch.voulgarakis.binder.jms.properties.JmsExtendedBindingProperties;
 import ch.voulgarakis.binder.jms.properties.JmsProducerProperties;
@@ -15,10 +16,14 @@ import org.springframework.cloud.stream.provisioning.ProvisioningProvider;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.integration.channel.AbstractMessageChannel;
 import org.springframework.integration.core.MessageProducer;
+import org.springframework.integration.support.DefaultErrorMessageStrategy;
+import org.springframework.integration.support.ErrorMessageStrategy;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
+
+import java.util.Objects;
 
 public class JmsMessageChannelBinder extends AbstractMessageChannelBinder<
         ExtendedConsumerProperties<JmsConsumerProperties>,
@@ -117,4 +122,65 @@ public class JmsMessageChannelBinder extends AbstractMessageChannelBinder<
         }
         return adapter;
     }
+
+    @Override
+    protected ErrorMessageStrategy getErrorMessageStrategy() {
+        return new DefaultErrorMessageStrategy();
+    }
+
+    @Override
+    protected MessageHandler getErrorMessageHandler(ConsumerDestination destination,
+            String group,
+            final ExtendedConsumerProperties<JmsConsumerProperties> properties) {
+        JmsConsumerDestination jmsConsumerDestination = (JmsConsumerDestination) destination;
+
+        if (Objects.nonNull(jmsConsumerDestination.getDlq())) {
+            return jmsMessageHandlerFactory.errorMessageHandler(jmsConsumerDestination);
+        } else if (properties.getMaxAttempts() > 1) {
+            return new RejectAndDontRequeueRecoverer();
+        } else {
+            return super.getErrorMessageHandler(destination, group, properties);
+        }
+    }
+
+//    @Override
+//    protected MessageHandler getPolledConsumerErrorMessageHandler(
+//            ConsumerDestination destination, String group,
+//            ExtendedConsumerProperties<RabbitConsumerProperties> properties) {
+//        MessageHandler handler = getErrorMessageHandler(destination, group, properties);
+//        if (handler != null) {
+//            return handler;
+//        }
+//        final MessageHandler superHandler = super.getErrorMessageHandler(destination,
+//                group, properties);
+//        return message -> {
+//            Message amqpMessage = (Message) message.getHeaders()
+//                    .get(AmqpMessageHeaderErrorMessageStrategy.AMQP_RAW_MESSAGE);
+//            if (!(message instanceof ErrorMessage)) {
+//                logger.error("Expected an ErrorMessage, not a "
+//                        + message.getClass().toString() + " for: " + message);
+//            }
+//            else if (amqpMessage == null) {
+//                if (superHandler != null) {
+//                    superHandler.handleMessage(message);
+//                }
+//            }
+//            else {
+//                if (message.getPayload() instanceof MessagingException) {
+//                    AcknowledgmentCallback ack = StaticMessageHeaderAccessor
+//                            .getAcknowledgmentCallback(
+//                                    ((MessagingException) message.getPayload())
+//                                            .getFailedMessage());
+//                    if (ack != null) {
+//                        if (properties.getExtension().isRequeueRejected()) {
+//                            ack.acknowledge(Status.REQUEUE);
+//                        }
+//                        else {
+//                            ack.acknowledge(Status.REJECT);
+//                        }
+//                    }
+//                }
+//            }
+//        };
+//    }
 }
