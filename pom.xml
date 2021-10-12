@@ -193,9 +193,6 @@
         <!-- GPG sign the artifacts to be deployed to maven central -->
         <profile>
             <id>release</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
             <properties>
                 <changelist>.RELEASE</changelist>
                 <skipTests>true</skipTests>
@@ -235,6 +232,36 @@
                     <!--                            <tag>REL_v${project.version}</tag>-->
                     <!--                        </configuration>-->
                     <!--                    </plugin>-->
+                </plugins>
+            </build>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub gevoulga Apache Maven Packages</name>
+                    <url>https://maven.pkg.github.com/gevoulga/spring-cloud-stream-binder-jms</url>
+                </repository>
+            </distributionManagement>
+            <!-- To release:
+            mvn clean deploy -Prelease -Dgpg.passphrase=yourpassphrase
+             -->
+        </profile>
+        <profile>
+            <id>github</id>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub gevoulga Apache Maven Packages</name>
+                    <url>https://maven.pkg.github.com/gevoulga/spring-cloud-stream-binder-jms</url>
+                </repository>
+            </distributionManagement>
+            <!-- To release:
+            mvn clean deploy -Prelease,github -Dgpg.passphrase=yourpassphrase
+             -->
+        </profile>
+        <profile>
+            <id>maven-central</id>
+            <build>
+                <plugins>
                     <!-- Staging release:
                         mvn clean deploy -Prelease
                         mvn nexus-staging:release -Prelease
@@ -265,14 +292,9 @@
                     <id>ossrh</id>
                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
                 </repository>
-                <repository>
-                    <id>github</id>
-                    <name>GitHub gevoulga Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/gevoulga/spring-cloud-stream-binder-jms</url>
-                </repository>
             </distributionManagement>
             <!-- To release:
-            mvn clean deploy -Prelease -Dgpg.passphrase=yourpassphrase
+            mvn clean deploy -Prelease,maven-central -Dgpg.passphrase=yourpassphrase
              -->
         </profile>
     </profiles>
