@@ -188,6 +188,7 @@
             </plugin>
         </plugins>
     </build>
+
     <profiles>
         <!-- GPG sign the artifacts to be deployed to maven central -->
         <profile>
@@ -196,8 +197,7 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-<!--                <changelist>.RELEASE</changelist>-->
-                <changelist>-SNAPSHOT</changelist>
+                <changelist>.RELEASE</changelist>
                 <skipTests>true</skipTests>
                 <deployAtEnd>true</deployAtEnd>
             </properties>
@@ -251,7 +251,7 @@
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <!-- Setting this to true will stage and release at once -->
                             <!--  Change to true once we're good! -->
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -264,6 +264,11 @@
                 <repository>
                     <id>ossrh</id>
                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub gevoulga Apache Maven Packages</name>
+                    <url>https://maven.pkg.github.com/gevoulga/spring-cloud-stream-binder-jms</url>
                 </repository>
             </distributionManagement>
             <!-- To release:
