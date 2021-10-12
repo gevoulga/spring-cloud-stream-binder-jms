@@ -188,21 +188,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-    </distributionManagement>
-
-    <!-- To release:
-    mvn clean deploy -Prelease -Dgpg.passphrase=yourpassphrase
-     -->
     <profiles>
         <!-- GPG sign the artifacts to be deployed to maven central -->
         <profile>
@@ -211,7 +196,8 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <changelist>.RELEASE</changelist>
+<!--                <changelist>.RELEASE</changelist>-->
+                <changelist>-SNAPSHOT</changelist>
                 <skipTests>true</skipTests>
                 <deployAtEnd>true</deployAtEnd>
             </properties>
@@ -263,12 +249,26 @@
                         <configuration>
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <!-- Setting this to true will stage and release at one -->
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <!-- Setting this to true will stage and release at once -->
+                            <!--  Change to true once we're good! -->
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+            <!-- To release:
+            mvn clean deploy -Prelease -Dgpg.passphrase=yourpassphrase
+             -->
         </profile>
     </profiles>
 
